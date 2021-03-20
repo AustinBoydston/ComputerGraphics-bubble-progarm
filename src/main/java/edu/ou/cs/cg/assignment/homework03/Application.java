@@ -45,7 +45,7 @@ public final class Application
 	//**********************************************************************
 
 	public static final String		DEFAULT_NAME = "Homework03";
-	public static final Dimension	DEFAULT_SIZE = new Dimension(500, 500);
+	public static final Dimension	DEFAULT_SIZE = new Dimension(1280, 720);
 
 	//**********************************************************************
 	// Main

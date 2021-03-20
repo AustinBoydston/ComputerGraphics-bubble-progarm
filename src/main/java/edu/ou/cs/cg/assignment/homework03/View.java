@@ -241,12 +241,60 @@ public final class View
 
 	private void	drawMain(GL2 gl)
 	{
+	    setScreenProjection(gl);
 		drawBounds(gl);							// Unit bounding box
 		drawAxes(gl);								// X and Y axes
 		drawCursor(gl);							// Crosshairs at mouse point
-		drawPolyline(gl);							// Draw the user's sketch
+		drawPolyline(gl);	
+		setColor(gl, 0, 0, 0);
+	    drawBubble(gl);// Draw the user's sketch
 	}
 
+	private void   setColor(GL2 gl, int r, int g, int b, int a)
+    {
+        gl.glColor4f(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+    }
+
+    private void    setColor(GL2 gl, int r, int g, int b)
+    {
+        setColor(gl, r, g, b, 255);
+    }
+	private static final int       SIDES_MOON = 18;
+    private static final double ANGLE_MOON = 2.0 * Math.PI / SIDES_MOON;
+    
+	private void drawBubble(GL2 gl)
+	{
+	    
+	    double     theta = 0.20 * ANGLE_MOON;
+        int     cx = 100;
+        int     cy = 100;
+        int     r = 20;
+
+        // Fill the whole moon in white
+        gl.glBegin(GL.GL_TRIANGLE_FAN);
+
+        setColor(gl, 0, 255, 255);            // White
+        gl.glVertex2d(cx, cy);
+
+        for (int i=0; i<SIDES_MOON+1; i++)      // 18 sides
+        {
+            gl.glVertex2d(cx + r * Math.cos(theta), cy + r * Math.sin(theta));
+            theta += ANGLE_MOON;
+        }
+
+        gl.glEnd();
+	    
+	    setColor(gl, 0, 0, 0);
+	    
+	}
+	   private void    setScreenProjection(GL2 gl)
+	    {
+	        GLU glu = GLU.createGLU();
+
+	        gl.glMatrixMode(GL2.GL_PROJECTION);     // Prepare for matrix xform
+	        gl.glLoadIdentity();                        // Set to identity matrix
+	        glu.gluOrtho2D(0.0f, 1280.0f, 0.0f, 720.0f);// 2D translate and scale
+	    }
 	private void	drawBounds(GL2 gl)
 	{
 		gl.glColor3f(0.1f, 0.1f, 0.1f);
