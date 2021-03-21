@@ -98,7 +98,10 @@ public final class KeyHandler extends KeyAdapter
 			case KeyEvent.VK_C:
 				model.toggleColorful();
 				return;
-
+			case KeyEvent.VK_SPACE: model.pop(); break;
+			    //int[]    temp = {3, 4, 5};
+			   // model.createBubble(30, 30, 20, temp, 1);
+			    //break;
 			case KeyEvent.VK_CLEAR:
 			case KeyEvent.VK_D:
 			case KeyEvent.VK_DELETE:

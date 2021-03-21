@@ -23,89 +23,93 @@ import edu.ou.cs.cg.utilities.Utilities;
 //******************************************************************************
 
 /**
- * The <CODE>MouseHandler</CODE> class.<P>
+ * The <CODE>MouseHandler</CODE> class.
+ * <P>
  *
- * @author  Chris Weaver
+ * @author Chris Weaver
  * @version %I%, %G%
  */
 public final class MouseHandler extends MouseAdapter
 {
-	//**********************************************************************
-	// Private Members
-	//**********************************************************************
+    // **********************************************************************
+    // Private Members
+    // **********************************************************************
 
-	// State (internal) variables
-	private final View		view;
-	private final Model	model;
+    // State (internal) variables
+    private final View view;
+    private final Model model;
 
-	//**********************************************************************
-	// Constructors and Finalizer
-	//**********************************************************************
+    // **********************************************************************
+    // Constructors and Finalizer
+    // **********************************************************************
 
-	public MouseHandler(View view, Model model)
-	{
-		this.view = view;
-		this.model = model;
+    public MouseHandler(View view, Model model)
+    {
+        this.view = view;
+        this.model = model;
 
-		Component	component = view.getCanvas();
+        Component component = view.getCanvas();
 
-		component.addMouseListener(this);
-		component.addMouseMotionListener(this);
-		component.addMouseWheelListener(this);
-	}
+        component.addMouseListener(this);
+        component.addMouseMotionListener(this);
+        component.addMouseWheelListener(this);
+    }
 
-	//**********************************************************************
-	// Override Methods (MouseListener)
-	//**********************************************************************
+    // **********************************************************************
+    // Override Methods (MouseListener)
+    // **********************************************************************
 
-	public void		mouseClicked(MouseEvent e)
-	{
-		if (Utilities.isShiftDown(e))
-			model.setOriginInViewCoordinates(e.getPoint());
-		else
-			model.addPolylinePointInViewCoordinates(e.getPoint());
-	}
+    public void mouseClicked(MouseEvent e)
+    {
+        if (Utilities.isShiftDown(e))
+            model.setOriginInViewCoordinates(e.getPoint());
+        else
+        {
+            model.addPolylinePointInViewCoordinates(e.getPoint());
+            model.pop();
+        }
+    }
 
-	public void		mouseEntered(MouseEvent e)
-	{
-		model.setCursorInViewCoordinates(e.getPoint());
-	}
+    public void mouseEntered(MouseEvent e)
+    {
+        model.setCursorInViewCoordinates(e.getPoint());
+    }
 
-	public void		mouseExited(MouseEvent e)
-	{
-		model.turnCursorOff();
-	}
+    public void mouseExited(MouseEvent e)
+    {
+        model.turnCursorOff();
+    }
 
-	public void		mousePressed(MouseEvent e)
-	{
-	}
+    public void mousePressed(MouseEvent e)
+    {
+    }
 
-	public void		mouseReleased(MouseEvent e)
-	{
-	}
+    public void mouseReleased(MouseEvent e)
+    {
+    }
 
-	//**********************************************************************
-	// Override Methods (MouseMotionListener)
-	//**********************************************************************
+    // **********************************************************************
+    // Override Methods (MouseMotionListener)
+    // **********************************************************************
 
-	public void		mouseDragged(MouseEvent e)
-	{
-		model.addPolylinePointInViewCoordinates(e.getPoint());
-		model.setCursorInViewCoordinates(e.getPoint());
-	}
+    public void mouseDragged(MouseEvent e)
+    {
+        model.addPolylinePointInViewCoordinates(e.getPoint());
+        model.setCursorInViewCoordinates(e.getPoint());
+    }
 
-	public void		mouseMoved(MouseEvent e)
-	{
-		model.setCursorInViewCoordinates(e.getPoint());
-	}
+    public void mouseMoved(MouseEvent e)
+    {
+        model.setCursorInViewCoordinates(e.getPoint());
+    }
 
-	//**********************************************************************
-	// Override Methods (MouseWheelListener)
-	//**********************************************************************
+    // **********************************************************************
+    // Override Methods (MouseWheelListener)
+    // **********************************************************************
 
-	public void		mouseWheelMoved(MouseWheelEvent e)
-	{
-	}
+    public void mouseWheelMoved(MouseWheelEvent e)
+    {
+    }
 }
 
 //******************************************************************************

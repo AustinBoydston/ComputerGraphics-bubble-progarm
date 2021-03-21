@@ -17,16 +17,22 @@
 package edu.ou.cs.cg.assignment.homework03;
 
 //import java.lang.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.text.DecimalFormat;
-import java.util.*;
-import com.jogamp.opengl.*;
+import java.util.Random;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLJPanel;
-import com.jogamp.opengl.glu.*;
+import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
+
 import edu.ou.cs.cg.utilities.Utilities;
 
 //******************************************************************************
@@ -269,7 +275,31 @@ public final class View
         int     cx = 100;
         int     cy = 100;
         int     r = 20;
-
+        int xSpawn = 400;
+        int ySpawn = 300;
+        Random randDir = new Random();
+        
+        //might delete later
+        int[] temp = {0, 0, 0};
+        
+        //create new bubble
+        if( counter % 60 == 0)
+        {
+            //                                      Select a random number between 0 and 3 inclusive to ditermine the direction
+            model.createBubble(randDir.nextInt(200) + xSpawn , randDir.nextInt(200) + ySpawn, 20, temp,  randDir.nextInt(4));
+        }
+        
+        
+        //draw bubbles
+        if(!model.getBubbleList().isEmpty())
+        {
+            //iterate through the list of bubbles
+        for(int j = 0; j < model.getBubbleList().size(); j++)
+        {
+            cx = model.getBubbleList().get(j).getX();
+            cy = model.getBubbleList().get(j).getY();
+            r = model.getBubbleList().get(j).getRadius();
+            
         // Fill the whole moon in white
         gl.glBegin(GL.GL_TRIANGLE_FAN);
 
@@ -283,7 +313,20 @@ public final class View
         }
 
         gl.glEnd();
-	    
+        
+        
+        //update position of bubble
+        model.updatePosition(j, model.getBubbleList().get(j).getDirection());
+        
+        
+        //check if bubble is still in the frame
+        if(cx < 0 || cx > 1280 || cy < 0 || cy > 720)
+        {
+            //delete the bubble when it exits the frame
+            model.getBubbleList().remove(j);
+        }
+        }
+        }
 	    setColor(gl, 0, 0, 0);
 	    
 	}

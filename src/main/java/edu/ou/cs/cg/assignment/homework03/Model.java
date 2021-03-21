@@ -32,8 +32,14 @@ package edu.ou.cs.cg.assignment.homework03;
 //import java.lang.*;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.util.*;
-import com.jogamp.opengl.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLRunnable;
+
 import edu.ou.cs.cg.utilities.Utilities;
 
 //******************************************************************************
@@ -41,173 +47,248 @@ import edu.ou.cs.cg.utilities.Utilities;
 /**
  * The <CODE>Model</CODE> class.
  *
- * @author  Chris Weaver
+ * @author Chris Weaver
  * @version %I%, %G%
  */
 public final class Model
 {
-	//**********************************************************************
-	// Private Members
-	//**********************************************************************
+    // **********************************************************************
+    // Private Members
+    // **********************************************************************
 
-	// State (internal) variables
-	private final View					view;
+    // State (internal) variables
+    private final View view;
 
-	// Model variables
-	private Point2D.Double				origin;	// Current origin coords
-	private Point2D.Double				cursor;	// Current cursor coords
-	private ArrayList<Point2D.Double>	points;	// Drawn polyline points
-	private boolean					colorful;	// Show rainbow version?
+    // Model variables
+    private Point2D.Double origin; // Current origin coords
+    private Point2D.Double cursor; // Current cursor coords
+    private ArrayList<Point2D.Double> points; // Drawn polyline points
+    private boolean colorful; // Show rainbow version?
 
-	//**********************************************************************
-	// Constructors and Finalizer
-	//**********************************************************************
+    private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();;
 
-	public Model(View view)
-	{
-		this.view = view;
+    // **********************************************************************
+    // Constructors and Finalizer
+    // **********************************************************************
 
-		// Initialize user-adjustable variables (with reasonable default values)
-		origin = new Point2D.Double(0.0, 0.0);
-		cursor = null;
-		points = new ArrayList<Point2D.Double>();
-		colorful = false;
-	}
+    public Model(View view)
+    {
+        this.view = view;
 
-	//**********************************************************************
-	// Public Methods (Access Variables)
-	//**********************************************************************
+        // Initialize user-adjustable variables (with reasonable default values)
+        origin = new Point2D.Double(0.0, 0.0);
+        cursor = null;
+        points = new ArrayList<Point2D.Double>();
+        colorful = false;
+    }
 
-	public Point2D.Double	getOrigin()
-	{
-		return new Point2D.Double(origin.x, origin.y);
-	}
+    // **********************************************************************
+    // Public Methods (Access Variables)
+    // **********************************************************************
 
-	public Point2D.Double	getCursor()
-	{
-		if (cursor == null)
-			return null;
-		else
-			return new Point2D.Double(cursor.x, cursor.y);
-	}
+    public void updatePosition(int index, int direction)
+    {
+        int x = bubbles.get(index).getX();
+        int y = bubbles.get(index).getY();
+        
+        //update position based on direction
+        switch(direction)
+        {
+            case 0: x += 1; bubbles.get(index).setX(x); break;
+            case 1: x -= 1; bubbles.get(index).setX(x); break;
+            case 2: y += 1; bubbles.get(index).setY(y); break;
+            case 3: y -= 1; bubbles.get(index).setY(y); break;
+        }
+        
+        
+        
+        
+    }
+    
+    //return the list of bubbles
+    public ArrayList<Bubble> getBubbleList()
+    {
+        return bubbles;
+    }
 
-	public List<Point2D.Double>	getPolyline()
-	{
-		return Collections.unmodifiableList(points);
-	}
+    //create a new bubble
+    public void createBubble(int x, int y, int r, int[] c, int dir)
+    {
 
-	public boolean	getColorful()
-	{
-		return colorful;
-	}
+        bubbles.add(new Bubble(x, y, r, c, dir));
+    }
 
-	//**********************************************************************
-	// Public Methods (Modify Variables)
-	//**********************************************************************
+    //pop the bubble the cursor is over
+    public void pop()
+    {
+        if (!bubbles.isEmpty())
+        {
+            for (int i = 0; i < bubbles.size(); i++)
+            {
+                if (cursor.x < bubbles.get(i).getX() + bubbles.get(i).getRadius()
+                        && cursor.x > bubbles.get(i).getX() - bubbles.get(i).getRadius())
+                {
+                    if (cursor.y < bubbles.get(i).getY() + bubbles.get(i).getRadius()
+                            && cursor.y > bubbles.get(i).getY() - bubbles.get(i).getRadius())
+                    {
+                        bubbles.remove(i);
+                    }
+                }
+            }
+        }
+    }
 
-	public void	setOriginInSceneCoordinates(Point2D.Double q)
-	{
-		view.getCanvas().invoke(false, new BasicUpdater() {
-			public void	update(GL2 gl) {
-				origin = new Point2D.Double(q.x, q.y);
-			}
-		});;
-	}
+    public Point2D.Double getOrigin()
+    {
+        return new Point2D.Double(origin.x, origin.y);
+    }
 
-	public void	setOriginInViewCoordinates(Point q)
-	{
-		view.getCanvas().invoke(false, new ViewPointUpdater(q) {
-			public void	update(double[] p) {
-				origin = new Point2D.Double(p[0], p[1]);
-			}
-		});;
-	}
+    public Point2D.Double getCursor()
+    {
+        if (cursor == null)
+            return null;
+        else
+            return new Point2D.Double(cursor.x, cursor.y);
+    }
 
-	public void	setCursorInViewCoordinates(Point q)
-	{
-		view.getCanvas().invoke(false, new ViewPointUpdater(q) {
-			public void	update(double[] p) {
-				cursor = new Point2D.Double(p[0], p[1]);
-			}
-		});;
-	}
+    public List<Point2D.Double> getPolyline()
+    {
+        return Collections.unmodifiableList(points);
+    }
 
-	public void	turnCursorOff()
-	{
-		view.getCanvas().invoke(false, new BasicUpdater() {
-			public void	update(GL2 gl) {
-				cursor = null;
-			}
-		});;
-	}
+    public boolean getColorful()
+    {
+        return colorful;
+    }
 
-	public void	addPolylinePointInViewCoordinates(Point q)
-	{
-		view.getCanvas().invoke(false, new ViewPointUpdater(q) {
-			public void	update(double[] p) {
-				points.add(new Point2D.Double(p[0], p[1]));
-			}
-		});;
-	}
+    // **********************************************************************
+    // Public Methods (Modify Variables)
+    // **********************************************************************
 
-	public void	clearPolyline()
-	{
-		view.getCanvas().invoke(false, new BasicUpdater() {
-			public void	update(GL2 gl) {
-				points.clear();
-			}
-		});;
-	}
+    public void setOriginInSceneCoordinates(Point2D.Double q)
+    {
+        view.getCanvas().invoke(false, new BasicUpdater()
+        {
+            public void update(GL2 gl)
+            {
+                origin = new Point2D.Double(q.x, q.y);
+            }
+        });
+        ;
+    }
 
-	public void	toggleColorful()
-	{
-		view.getCanvas().invoke(false, new BasicUpdater() {
-			public void	update(GL2 gl) {
-				colorful = !colorful;
-			}
-		});;
-	}
+    public void setOriginInViewCoordinates(Point q)
+    {
+        view.getCanvas().invoke(false, new ViewPointUpdater(q)
+        {
+            public void update(double[] p)
+            {
+                origin = new Point2D.Double(p[0], p[1]);
+            }
+        });
+        ;
+    }
 
-	//**********************************************************************
-	// Inner Classes
-	//**********************************************************************
+    public void setCursorInViewCoordinates(Point q)
+    {
+        view.getCanvas().invoke(false, new ViewPointUpdater(q)
+        {
+            public void update(double[] p)
+            {
+                cursor = new Point2D.Double(p[0], p[1]);
+            }
+        });
+        ;
+    }
 
-	// Convenience class to simplify the implementation of most updaters.
-	private abstract class BasicUpdater implements GLRunnable
-	{
-		public final boolean	run(GLAutoDrawable drawable)
-		{
-			GL2	gl = drawable.getGL().getGL2();
+    public void turnCursorOff()
+    {
+        view.getCanvas().invoke(false, new BasicUpdater()
+        {
+            public void update(GL2 gl)
+            {
+                cursor = null;
+            }
+        });
+        ;
+    }
 
-			update(gl);
+    public void addPolylinePointInViewCoordinates(Point q)
+    {
+        view.getCanvas().invoke(false, new ViewPointUpdater(q)
+        {
+            public void update(double[] p)
+            {
+                points.add(new Point2D.Double(p[0], p[1]));
+            }
+        });
+        ;
+    }
 
-			return true;	// Let animator take care of updating the display
-		}
+    public void clearPolyline()
+    {
+        view.getCanvas().invoke(false, new BasicUpdater()
+        {
+            public void update(GL2 gl)
+            {
+                points.clear();
+            }
+        });
+        ;
+    }
 
-		public abstract void	update(GL2 gl);
-	}
+    public void toggleColorful()
+    {
+        view.getCanvas().invoke(false, new BasicUpdater()
+        {
+            public void update(GL2 gl)
+            {
+                colorful = !colorful;
+            }
+        });
+        ;
+    }
 
-	// Convenience class to simplify updates in cases in which the input is a
-	// single point in view coordinates (integers/pixels).
-	private abstract class ViewPointUpdater extends BasicUpdater
-	{
-		private final Point	q;
+    // **********************************************************************
+    // Inner Classes
+    // **********************************************************************
 
-		public ViewPointUpdater(Point q)
-		{
-			this.q = q;
-		}
+    // Convenience class to simplify the implementation of most updaters.
+    private abstract class BasicUpdater implements GLRunnable
+    {
+        public final boolean run(GLAutoDrawable drawable)
+        {
+            GL2 gl = drawable.getGL().getGL2();
 
-		public final void	update(GL2 gl)
-		{
-			int		h = view.getHeight();
-			double[]	p = Utilities.mapViewToScene(gl, q.x, h - q.y, 0.0);
+            update(gl);
 
-			update(p);
-		}
+            return true; // Let animator take care of updating the display
+        }
 
-		public abstract void	update(double[] p);
-	}
+        public abstract void update(GL2 gl);
+    }
+
+    // Convenience class to simplify updates in cases in which the input is a
+    // single point in view coordinates (integers/pixels).
+    private abstract class ViewPointUpdater extends BasicUpdater
+    {
+        private final Point q;
+
+        public ViewPointUpdater(Point q)
+        {
+            this.q = q;
+        }
+
+        public final void update(GL2 gl)
+        {
+            int h = view.getHeight();
+            double[] p = Utilities.mapViewToScene(gl, q.x, h - q.y, 0.0);
+
+            update(p);
+        }
+
+        public abstract void update(double[] p);
+    }
 }
 
 //******************************************************************************
