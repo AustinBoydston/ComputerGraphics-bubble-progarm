@@ -248,10 +248,10 @@ public final class View
 	private void	drawMain(GL2 gl)
 	{
 	    setScreenProjection(gl);
-		drawBounds(gl);							// Unit bounding box
-		drawAxes(gl);								// X and Y axes
-		drawCursor(gl);							// Crosshairs at mouse point
-		drawPolyline(gl);	
+	//	drawBounds(gl);							// Unit bounding box
+		//drawAxes(gl);								// X and Y axes
+	//	drawCursor(gl);							// Crosshairs at mouse point
+		//drawPolyline(gl);	
 		setColor(gl, 0, 0, 0);
 	    drawBubble(gl);// Draw the user's sketch
 	}
