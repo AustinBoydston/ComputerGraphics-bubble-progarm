@@ -204,6 +204,15 @@ public final class View
 		gl.glLoadIdentity();						// Set to identity matrix
 		glu.gluOrtho2D(xmin, xmax, ymin, ymax);	// 2D translate and scale
 	}
+	
+	private void    setScreenProjection(GL2 gl)
+	{
+        GLU glu = GLU.createGLU();
+
+        gl.glMatrixMode(GL2.GL_PROJECTION);     // Prepare for matrix xform
+        gl.glLoadIdentity();                        // Set to identity matrix
+        glu.gluOrtho2D(0.0f, 1280.0f, 0.0f, 720.0f);// 2D translate and scale
+    }
 
 	//**********************************************************************
 	// Private Methods (Scene)
@@ -248,12 +257,8 @@ public final class View
 	private void	drawMain(GL2 gl)
 	{
 	    setScreenProjection(gl);
-	//	drawBounds(gl);							// Unit bounding box
-		//drawAxes(gl);								// X and Y axes
-	//	drawCursor(gl);							// Crosshairs at mouse point
-		//drawPolyline(gl);	
 		setColor(gl, 0, 0, 0);
-	    drawBubble(gl);// Draw the user's sketch
+	    drawBubble(gl);
 	}
 
 	private void   setColor(GL2 gl, int r, int g, int b, int a)
@@ -265,16 +270,17 @@ public final class View
     {
         setColor(gl, r, g, b, 255);
     }
-	private static final int       SIDES_MOON = 18;
-    private static final double ANGLE_MOON = 2.0 * Math.PI / SIDES_MOON;
+    
+	private static final int       SIDES_BUBBLE = 18;
+    private static final double BUBBLE_ANGLE = 2.0 * Math.PI / SIDES_BUBBLE;
     
 	private void drawBubble(GL2 gl)
 	{
 	    
-	    double     theta = 0.20 * ANGLE_MOON;
-        int     cx = 100;
-        int     cy = 100;
-        int     r = 20;
+	    double theta = 0.20 * BUBBLE_ANGLE;
+        int cx = 100;
+        int cy = 100;
+        int r = 20;
         int xSpawn = 400;
         int ySpawn = 300;
         Random randDir = new Random();
@@ -293,149 +299,42 @@ public final class View
         //draw bubbles
         if(!model.getBubbleList().isEmpty())
         {
-            //iterate through the list of bubbles
-        for(int j = 0; j < model.getBubbleList().size(); j++)
-        {
-            cx = model.getBubbleList().get(j).getX();
-            cy = model.getBubbleList().get(j).getY();
-            r = model.getBubbleList().get(j).getRadius();
-            
-        // Fill the whole moon in white
-        gl.glBegin(GL.GL_TRIANGLE_FAN);
-
-        setColor(gl, 0, 255, 255);            // White
-        gl.glVertex2d(cx, cy);
-
-        for (int i=0; i<SIDES_MOON+1; i++)      // 18 sides
-        {
-            gl.glVertex2d(cx + r * Math.cos(theta), cy + r * Math.sin(theta));
-            theta += ANGLE_MOON;
-        }
-
-        gl.glEnd();
-        
-        
-        //update position of bubble
-        model.updatePosition(j, model.getBubbleList().get(j).getDirection());
-        
-        
-        //check if bubble is still in the frame
-        if(cx < 0 || cx > 1280 || cy < 0 || cy > 720)
-        {
-            //delete the bubble when it exits the frame
-            model.getBubbleList().remove(j);
-        }
-        }
+	        //iterate through the list of bubbles
+	        for(int j = 0; j < model.getBubbleList().size(); j++)
+	        {
+	            cx = model.getBubbleList().get(j).getX();
+	            cy = model.getBubbleList().get(j).getY();
+	            r = model.getBubbleList().get(j).getRadius();
+	            
+			    // Fill the bubble with cyan
+			    gl.glBegin(GL.GL_TRIANGLE_FAN);
+			
+			    setColor(gl, 0, 255, 255);            // Cyan
+			    gl.glVertex2d(cx, cy);
+			
+			    for (int i=0; i<SIDES_BUBBLE+1; i++)      // 18 sides
+			    {
+			        gl.glVertex2d(cx + r * Math.cos(theta), cy + r * Math.sin(theta));
+			        theta += BUBBLE_ANGLE;
+			    }
+			
+			    gl.glEnd();
+			    
+			    
+			    //update position of bubble
+			    model.updatePosition(j, model.getBubbleList().get(j).getDirection());
+			    
+			    
+			    //check if bubble is still in the frame
+			    if(cx < 0 || cx > 1280 || cy < 0 || cy > 720)
+			    {
+			        //delete the bubble when it exits the frame
+			        model.getBubbleList().remove(j);
+			    }
+	        }
         }
 	    setColor(gl, 0, 0, 0);
 	    
-	}
-	   private void    setScreenProjection(GL2 gl)
-	    {
-	        GLU glu = GLU.createGLU();
-
-	        gl.glMatrixMode(GL2.GL_PROJECTION);     // Prepare for matrix xform
-	        gl.glLoadIdentity();                        // Set to identity matrix
-	        glu.gluOrtho2D(0.0f, 1280.0f, 0.0f, 720.0f);// 2D translate and scale
-	    }
-	private void	drawBounds(GL2 gl)
-	{
-		gl.glColor3f(0.1f, 0.1f, 0.1f);
-		gl.glBegin(GL.GL_LINE_LOOP);
-
-		gl.glVertex2d(1.0, 1.0);
-		gl.glVertex2d(-1.0, 1.0);
-		gl.glVertex2d(-1.0, -1.0);
-		gl.glVertex2d(1.0, -1.0);
-
-		gl.glEnd();
-	}
-
-	private void	drawAxes(GL2 gl)
-	{
-		gl.glBegin(GL.GL_LINES);
-
-		gl.glColor3f(0.25f, 0.25f, 0.25f);
-		gl.glVertex2d(-10.0, 0.0);
-		gl.glVertex2d(10.0, 0.0);
-
-		gl.glVertex2d(0.0, -10.0);
-		gl.glVertex2d(0.0, 10.0);
-
-		gl.glEnd();
-	}
-
-	private void	drawCursor(GL2 gl)
-	{
-		Point2D.Double	cursor = model.getCursor();
-
-		if (cursor == null)
-			return;
-
-		gl.glBegin(GL.GL_LINE_LOOP);
-		gl.glColor3f(0.5f, 0.5f, 0.5f);
-
-		for (int i=0; i<32; i++)
-		{
-			double	theta = (2.0 * Math.PI) * (i / 32.0);
-
-			gl.glVertex2d(cursor.x + 0.05 * Math.cos(theta),
-						  cursor.y + 0.05 * Math.sin(theta));
-		}
-
-		gl.glEnd();
-	}
-
-	private void	drawPolyline(GL2 gl)
-	{
-		java.util.List<Point2D.Double>	points = model.getPolyline();
-
-		gl.glColor3f(1.0f, 0.0f, 0.0f);
-
-		for (Point2D.Double p : points)
-		{
-			gl.glBegin(GL2.GL_POLYGON);
-
-			gl.glVertex2d(p.x - 0.05, p.y - 0.05);
-			gl.glVertex2d(p.x - 0.05, p.y + 0.05);
-			gl.glVertex2d(p.x + 0.05, p.y + 0.05);
-			gl.glVertex2d(p.x + 0.05, p.y - 0.05);
-
-			gl.glEnd();
-		}
-
-		if (model.getColorful())		// Show the psychedelic version...
-		{
-			float	a = 0.0f;
-			float	delta = 360.0f / (float)points.size();
-
-			gl.glColor3f(1.0f, 1.0f, 0.0f);
-			gl.glBegin(GL.GL_TRIANGLE_FAN);
-			gl.glVertex2d(0.0, 0.0);
-
-			for (Point2D.Double p : points)
-			{
-				Color	c = new Color(Color.HSBtoRGB(a, 1.0f, 1.0f));
-				float[]	rgb = c.getRGBColorComponents(null);
-
-				gl.glColor3f(rgb[0], rgb[1], rgb[2]);
-				gl.glVertex2d(p.x, p.y);
-
-				a += delta;
-			}
-
-			gl.glEnd();
-		}
-		else							// ...or the simple version.
-		{
-			gl.glColor3f(1.0f, 1.0f, 0.0f);
-			gl.glBegin(GL.GL_LINE_STRIP);
-
-			for (Point2D.Double p : points)
-				gl.glVertex2d(p.x, p.y);
-
-			gl.glEnd();
-		}
 	}
 }
 

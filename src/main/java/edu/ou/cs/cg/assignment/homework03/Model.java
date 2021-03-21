@@ -62,7 +62,6 @@ public final class Model
     // Model variables
     private Point2D.Double origin; // Current origin coords
     private Point2D.Double cursor; // Current cursor coords
-    private ArrayList<Point2D.Double> points; // Drawn polyline points
     private boolean colorful; // Show rainbow version?
 
     private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();;
@@ -78,7 +77,6 @@ public final class Model
         // Initialize user-adjustable variables (with reasonable default values)
         origin = new Point2D.Double(0.0, 0.0);
         cursor = null;
-        points = new ArrayList<Point2D.Double>();
         colorful = false;
     }
 
@@ -99,10 +97,6 @@ public final class Model
             case 2: y += 1; bubbles.get(index).setY(y); break;
             case 3: y -= 1; bubbles.get(index).setY(y); break;
         }
-        
-        
-        
-        
     }
     
     //return the list of bubbles
@@ -149,11 +143,6 @@ public final class Model
             return null;
         else
             return new Point2D.Double(cursor.x, cursor.y);
-    }
-
-    public List<Point2D.Double> getPolyline()
-    {
-        return Collections.unmodifiableList(points);
     }
 
     public boolean getColorful()
@@ -208,30 +197,6 @@ public final class Model
             public void update(GL2 gl)
             {
                 cursor = null;
-            }
-        });
-        ;
-    }
-
-    public void addPolylinePointInViewCoordinates(Point q)
-    {
-        view.getCanvas().invoke(false, new ViewPointUpdater(q)
-        {
-            public void update(double[] p)
-            {
-                points.add(new Point2D.Double(p[0], p[1]));
-            }
-        });
-        ;
-    }
-
-    public void clearPolyline()
-    {
-        view.getCanvas().invoke(false, new BasicUpdater()
-        {
-            public void update(GL2 gl)
-            {
-                points.clear();
             }
         });
         ;

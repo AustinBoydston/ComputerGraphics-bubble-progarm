@@ -65,7 +65,6 @@ public final class MouseHandler extends MouseAdapter
             model.setOriginInViewCoordinates(e.getPoint());
         else
         {
-            model.addPolylinePointInViewCoordinates(e.getPoint());
             model.pop();
         }
     }
@@ -94,7 +93,6 @@ public final class MouseHandler extends MouseAdapter
 
     public void mouseDragged(MouseEvent e)
     {
-        model.addPolylinePointInViewCoordinates(e.getPoint());
         model.setCursorInViewCoordinates(e.getPoint());
     }
 
