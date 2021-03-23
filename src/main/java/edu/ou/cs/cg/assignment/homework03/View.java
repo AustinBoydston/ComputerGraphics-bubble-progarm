@@ -186,7 +186,7 @@ public final class View
 	{
 		GL2	gl = drawable.getGL().getGL2();
 
-		//gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black background
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black background
 	}
 
 	private void	updatePipeline(GLAutoDrawable drawable)
@@ -231,7 +231,7 @@ public final class View
 		renderer.beginRendering(w, h);
 
 		// Draw all text in yellow
-		renderer.setColor(1.0f, 1.0f, 0.0f, 1.0f);
+		renderer.setColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		Point2D.Double	cursor = model.getCursor();
 
@@ -241,17 +241,17 @@ public final class View
 			String		sy = FORMAT.format(new Double(cursor.y));
 			String		s = "Pointer at (" + sx + "," + sy + ")";
 
-			renderer.draw(s, 2, 2);
+			//renderer.draw(s, 2, 2);
 		}
 		else
 		{
-			renderer.draw("No Pointer", 2, 2);
+			//renderer.draw("No Pointer", 2, 2);
 		}
 
 		String count = "Number of bubles popped: " + model.getCount();
 		
-		renderer.draw(svc, 2, 16);
-		renderer.draw(sso, 2, 30);
+		//renderer.draw(svc, 2, 16);
+		//renderer.draw(sso, 2, 30);
 		renderer.draw(count, 2, 700);
 
 		renderer.endRendering();
@@ -260,6 +260,7 @@ public final class View
 	private void	drawMain(GL2 gl)
 	{
 	    setScreenProjection(gl);
+	    background(gl);
 		setColor(gl, 0, 0, 0);
 	    drawBubble(gl);
 	}
@@ -277,6 +278,22 @@ public final class View
 	private static final int       SIDES_BUBBLE = 18;
     private static final double BUBBLE_ANGLE = 2.0 * Math.PI / SIDES_BUBBLE;
     
+    private void background(GL2 gl)
+    {
+    	gl.glBegin(GL2.GL_POLYGON);
+    	
+    	setColor(gl, 0, 0, 140);
+    	gl.glVertex2d(0,0);
+    	setColor(gl, 0, 0, 140);
+    	gl.glVertex2d(1280, 0);
+    	setColor(gl, 255, 255, 255);
+    	gl.glVertex2d(1280, 720);
+    	setColor(gl, 255, 255, 255);
+    	gl.glVertex2d(0, 720);
+    	
+    	gl.glEnd();
+    }
+   
 	private void drawBubble(GL2 gl)
 	{
 	    
