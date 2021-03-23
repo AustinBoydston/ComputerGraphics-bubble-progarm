@@ -24,6 +24,7 @@ package edu.ou.cs.cg.assignment.homework03;
 
 //import java.lang.*;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.*;
 import javax.swing.*;
 import com.jogamp.opengl.*;
@@ -74,7 +75,7 @@ public final class Application
 	//**********************************************************************
 	// Override Methods (Runnable)
 	//**********************************************************************
-
+	
 	public void	run()
 	{
 		GLProfile		profile = GLProfile.getDefault();
@@ -84,7 +85,7 @@ public final class Application
 		GLCapabilities	capabilities = new GLCapabilities(profile);
 		//GLCanvas		canvas = new GLCanvas(capabilities);	// Single-buffer
 		GLJPanel		canvas = new GLJPanel(capabilities);	// Double-buffer
-		JFrame			frame = new JFrame(DEFAULT_NAME);
+		JFrame			frame = new JFrame("Bubble Pop");
 
 		// Rectify display scaling issues when in Hi-DPI mode on macOS.
 		edu.ou.cs.cg.utilities.Utilities.setIdentityPixelScale(canvas);
@@ -93,8 +94,11 @@ public final class Application
 		canvas.setPreferredSize(DEFAULT_SIZE);
 
 		// Populate and show the frame
+		frame.setLocationRelativeTo(null);
+		
 		frame.setBounds(50, 50, 200, 200);
 		frame.getContentPane().add(canvas);
+		
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

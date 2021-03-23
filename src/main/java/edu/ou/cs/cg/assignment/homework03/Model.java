@@ -63,6 +63,7 @@ public final class Model
     private Point2D.Double origin; // Current origin coords
     private Point2D.Double cursor; // Current cursor coords
     private boolean colorful; // Show rainbow version?
+    private int popCount;
 
     private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();;
 
@@ -78,6 +79,7 @@ public final class Model
         origin = new Point2D.Double(0.0, 0.0);
         cursor = null;
         colorful = false;
+        popCount = 0;
     }
 
     // **********************************************************************
@@ -126,6 +128,7 @@ public final class Model
                             && cursor.y > bubbles.get(i).getY() - bubbles.get(i).getRadius())
                     {
                         bubbles.remove(i);
+                        popCount++;
                     }
                 }
             }
@@ -148,6 +151,11 @@ public final class Model
     public boolean getColorful()
     {
         return colorful;
+    }
+    
+    public int getCount()
+    {
+    	return popCount;
     }
 
     // **********************************************************************

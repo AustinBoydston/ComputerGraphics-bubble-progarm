@@ -186,7 +186,7 @@ public final class View
 	{
 		GL2	gl = drawable.getGL().getGL2();
 
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black background
+		//gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black background
 	}
 
 	private void	updatePipeline(GLAutoDrawable drawable)
@@ -248,8 +248,11 @@ public final class View
 			renderer.draw("No Pointer", 2, 2);
 		}
 
+		String count = "Number of bubles popped: " + model.getCount();
+		
 		renderer.draw(svc, 2, 16);
 		renderer.draw(sso, 2, 30);
+		renderer.draw(count, 2, 700);
 
 		renderer.endRendering();
 	}
