@@ -426,7 +426,9 @@ public final class View
 			    
 			    for (int i=0; i<SIDES_BUBBLE+1; i++)      // 18 sides
 			    {
-			    	gl.glTexCoord2f(0.5f*(((float) Math.cos(theta))+1.0f), 0.5f*(((float) Math.sin(theta))+1.0f));
+			    	float xtex = 0.5f*(((float) Math.cos(theta))+1.0f);
+			    	float ytex = 0.5f*(((float) Math.sin(theta))+1.0f);
+			    	gl.glTexCoord2f(xtex, ytex);
 			        gl.glVertex2d(cx + r * Math.cos(theta), cy + r * Math.sin(theta));
 			        theta += BUBBLE_ANGLE;
 			    }
