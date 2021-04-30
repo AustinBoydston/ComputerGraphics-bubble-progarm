@@ -331,7 +331,7 @@ public final class View
 		String isColor = "no";
 		if (model.getColorful())
 			isColor = "yes";
-		String count = "Number of bubles popped: " + model.getCount();
+		String count = "Number of bubbles popped (points): " + model.getCount();
 		String color = "Is colored bubbles on (press C): " + isColor;
 		
 		//renderer.draw(svc, 2, 16);
@@ -440,7 +440,7 @@ public final class View
 	    double theta = BUBBLE_ANGLE;		// Angle for one side of a bubble
         int cx = 100;						// Initialization of x coordinate 
         int cy = 100;						// Initialization of y coordinate
-        int r = 20;							// Radius of bubbles
+        int r = 10;							// Radius of bubbles
         int xSpawn = 400;					// Initial spawning coordinate for x
         int ySpawn = 300;					// Initial spawning coordinate for y
         int dirx = 0;						// Initialization of x rate of change
@@ -484,11 +484,11 @@ public final class View
 	        		diry = -1;
 	        	
 	            // Create a new bubble using random numbers between 0 and 200 for the intial position
-	        	// of spawn, the specified radius above, and random numbers between 1 and 3 for
-	        	// determining rate of change of each coordinate with dirx and diry being the decider
-	        	// for inversing the value
+	        	// of spawn, the specified radius above with a random number between 0 and 40, and 
+	        	// random numbers between 1 and 3 for determining rate of change of each coordinate 
+	        	// with dirx and diry being the decider for inversing the value
 	            model.createBubble(RANDOM.nextInt(200) + xSpawn , RANDOM.nextInt(200) + ySpawn, 
-	            		r, dirx*(RANDOM.nextInt(2)+1), diry*(RANDOM.nextInt(2)+1), emit);
+	            		r + RANDOM.nextInt(40), dirx*(RANDOM.nextInt(2)+1), diry*(RANDOM.nextInt(2)+1), emit);
         	}
         }
         
@@ -576,8 +576,8 @@ public final class View
 				    		if (arad >= brad)
 				    		{
 				    			// Set a new radius, a combination of both original radii
-				    			// of a and b, to bubble a
-				    			model.getBubbleList().get(j).setRadius(arad + brad);
+				    			// of a and scaled b, to bubble a
+				    			model.getBubbleList().get(j).setRadius(arad + ((int) (0.5*brad)));
 				    			// Set a new rate of change by combining both bubbles' rates for
 				    			// bubble a
 				    			model.getBubbleList().get(j).setDirection(adx + bdx, ady + bdy);
@@ -587,9 +587,9 @@ public final class View
 				    		// Bubble b is larger and absorbs a
 				    		else if (brad > arad)
 				    		{
-				    			// Set a new radius, a combination of both original radii
-				    			// of a and b, to bubble b
-				    			model.getBubbleList().get(i).setRadius(arad + brad);
+				    			// Set a new radius, a combination of both original radii of 
+				    			// bubble b and scaled a, to bubble b
+				    			model.getBubbleList().get(i).setRadius(((int) (0.5*arad)) + brad);
 				    			// Set a new rate of change by combining both bubbles' rates for
 				    			// bubble b
 				    			model.getBubbleList().get(i).setDirection(adx + bdx, ady + bdy);

@@ -63,8 +63,8 @@ public final class Model
     // Model variables
     private Point2D.Double origin; 									// Current origin coords
     private Point2D.Double cursor; 									// Current cursor coords
-    private int popCount;											// Number of bubbles poppped
-    private boolean colorful;											// Boolean for colorful bubbles
+    private int popCount;											// Number of bubbles poppped (pointwise)
+    private boolean colorful;										// Boolean for colorful bubbles
 
     private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();	// List of bubbles generated
     private ArrayList<Pop> popped = new ArrayList<Pop>();			// List of animations
