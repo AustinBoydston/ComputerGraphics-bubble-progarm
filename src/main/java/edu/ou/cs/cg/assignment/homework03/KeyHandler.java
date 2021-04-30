@@ -1,15 +1,19 @@
 //******************************************************************************
 // Copyright (C) 2016-2019 University of Oklahoma Board of Trustees.
 //******************************************************************************
-// Last modified: Wed Feb 27 17:33:04 2019 by Chris Weaver
+// Last modified: Fri Apr 30 2021 by Team 7
 //******************************************************************************
 // Major Modification History:
 //
 // 20160225 [weaver]:	Original file.
 // 20190227 [weaver]:	Updated to use model and asynchronous event handling.
+// 20210430 [team7]:	Final edits to project.
 //
 //******************************************************************************
-// Notes:
+// Notes: This documents contains structure of code used and given for use
+//        during the semester for our homeworks and were adopted for usage in
+//        our project. All the non-generic code unique to our project will
+//        have comments to explain its purpose.
 //
 //******************************************************************************
 
@@ -26,7 +30,7 @@ import edu.ou.cs.cg.utilities.Utilities;
 /**
  * The <CODE>KeyHandler</CODE> class.<P>
  *
- * @author  Chris Weaver
+ * @author  Team 7
  * @version %I%, %G%
  */
 public final class KeyHandler extends KeyAdapter
@@ -64,6 +68,7 @@ public final class KeyHandler extends KeyAdapter
 
 		switch (e.getKeyCode())
 		{
+			// Current numpad and arrow actions not applicable
 			case KeyEvent.VK_NUMPAD5:
 				p.x = 0.0;	p.y = 0.0;	break;
 
@@ -94,15 +99,10 @@ public final class KeyHandler extends KeyAdapter
 
 			case KeyEvent.VK_NUMPAD9:
 				p.x += a;		p.y += a;		break;
-
-			case KeyEvent.VK_C:
-				model.toggleColorful();
-				return;
-				
+			
+			// Funcitonality to allow for popping with space press when cursor
+			// is above the bubble
 			case KeyEvent.VK_SPACE: model.pop(); break;
-			    //int[]    temp = {3, 4, 5};
-			   // model.createBubble(30, 30, 20, temp, 1);
-			    //break;
 		}
 
 		model.setOriginInSceneCoordinates(p);

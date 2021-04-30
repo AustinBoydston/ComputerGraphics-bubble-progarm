@@ -1,11 +1,12 @@
 //******************************************************************************
 // Copyright (C) 2019 University of Oklahoma Board of Trustees.
 //******************************************************************************
-// Last modified: Wed Feb 27 17:32:08 2019 by Chris Weaver
+// Last modified: Fri Apr 30 2021 by Team 7
 //******************************************************************************
 // Major Modification History:
 //
 // 20190227 [weaver]:	Original file.
+// 20210430 [team7]: 	Final edits to project.
 //
 //******************************************************************************
 //
@@ -47,7 +48,7 @@ import edu.ou.cs.cg.utilities.Utilities;
 /**
  * The <CODE>Model</CODE> class.
  *
- * @author Chris Weaver
+ * @author Team 7
  * @version %I%, %G%
  */
 public final class Model
@@ -60,13 +61,12 @@ public final class Model
     private final View view;
 
     // Model variables
-    private Point2D.Double origin; // Current origin coords
-    private Point2D.Double cursor; // Current cursor coords
-    private boolean colorful; // Show rainbow version?
-    private int popCount;
+    private Point2D.Double origin; 									// Current origin coords
+    private Point2D.Double cursor; 									// Current cursor coords
+    private int popCount;											// Number of bubbles poppped
 
-    private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();
-    private ArrayList<Pop> popped = new ArrayList<Pop>();
+    private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();	// List of bubbles generated
+    private ArrayList<Pop> popped = new ArrayList<Pop>();			// List of animations
 
     // **********************************************************************
     // Constructors and Finalizer
@@ -79,7 +79,6 @@ public final class Model
         // Initialize user-adjustable variables (with reasonable default values)
         origin = new Point2D.Double(0.0, 0.0);
         cursor = null;
-        colorful = false;
         popCount = 0;
     }
 
@@ -87,22 +86,25 @@ public final class Model
     // Public Methods (Access Variables)
     // **********************************************************************
     
-    //return the list of bubbles
+    // Return the list of bubbles
     public ArrayList<Bubble> getBubbleList()
     {
         return bubbles;
     }
     
+    // Return the list of animations
     public ArrayList<Pop> getPoppedList()
     {
     	return popped;
     }
 
+    // Return the origin
     public Point2D.Double getOrigin()
     {
         return new Point2D.Double(origin.x, origin.y);
     }
 
+    // Return the cursor
     public Point2D.Double getCursor()
     {
         if (cursor == null)
@@ -110,12 +112,8 @@ public final class Model
         else
             return new Point2D.Double(cursor.x, cursor.y);
     }
-
-    public boolean getColorful()
-    {
-        return colorful;
-    }
     
+    // Return the pop count
     public int getCount()
     {
     	return popCount;
@@ -125,27 +123,30 @@ public final class Model
     // Public Methods (Modify Variables)
     // **********************************************************************
     
-    public void createBubble(int x, int y, int r, int[] c, int dx, int dy)
+    // Method for creating a bubble and storing in the list
+    public void createBubble(int x, int y, int r, int dx, int dy)
     {
     	view.getCanvas().invoke(false, new BasicUpdater() {
     		public void update(GL2 gl)
     		{
-    			 bubbles.add(new Bubble(x, y, r, c, dx, dy));
+    			 bubbles.add(new Bubble(x, y, r, dx, dy));
     		}
     	});;
     }
     
+    // Method for updating the position of a bubble based off of its rate of change
     public void updatePosition(int index)
     {
     	view.getCanvas().invoke(false, new BasicUpdater() {
     		public void update(GL2 gl)
     		{
+    			// Setup the parameters
     			int x = bubbles.get(index).getX();
     	        int y = bubbles.get(index).getY();
     	        int dx = bubbles.get(index).getDirectionX();
     	        int dy = bubbles.get(index).getDirectionY();
     	        
-    	        //update position based on direction
+    	        // Update position based on rate of change
     	        x = x + dx;
     	        y = y + dy;
     	        bubbles.get(index).setPos(x, y);
@@ -153,25 +154,34 @@ public final class Model
     	});;
     }
     
+    // Method for popping a bubble and generating the popping animation
     public void pop()
     {
     	view.getCanvas().invoke(false, new BasicUpdater() {
     		public void update(GL2 gl)
     		{
+    			// If there exists bubbles
     			if (!bubbles.isEmpty())
     	        {
+    				// Iterate throught the list
     	            for (int i = 0; i < bubbles.size(); i++)
     	            {
+    	            	// Check if the cursor coordinate lines up with the x coordinate of the bubble
     	                if (cursor.x < bubbles.get(i).getX() + bubbles.get(i).getRadius()
     	                        && cursor.x > bubbles.get(i).getX() - bubbles.get(i).getRadius())
     	                {
+    	                	// Check if the cursor coordinate lines up with the y coordinate of the bubble
     	                    if (cursor.y < bubbles.get(i).getY() + bubbles.get(i).getRadius()
     	                            && cursor.y > bubbles.get(i).getY() - bubbles.get(i).getRadius())
     	                    {
+    	                    	// Add a new popping animation at the bubbles location
     	                    	popped.add(new Pop(bubbles.get(i).getX(), bubbles.get(i).getY(), 
     	                    			(double) bubbles.get(i).getRadius()));
+    	                    	// Increase the popcount based on the radius, larger bubbles give more
+    	                    	// points
+    	                    	popCount = popCount + (bubbles.get(i).getRadius() / 20);
+    	                    	// Remove the bubble popped from the list
     	                        bubbles.remove(i);
-    	                        popCount++;
     	                    }
     	                }
     	            }
@@ -180,6 +190,7 @@ public final class Model
     	});;
     }
     
+    // Method for removing a bubble, used in combining bubbles
     public void removeBubble(int i)
     {
     	view.getCanvas().invoke(false, new BasicUpdater() {
@@ -190,6 +201,7 @@ public final class Model
     	});;
     }
     
+    // Method for removing animations from the list after having reach their limit
     public void removePopped(int i)
     {
     	view.getCanvas().invoke(false, new BasicUpdater() {
@@ -243,18 +255,6 @@ public final class Model
             public void update(GL2 gl)
             {
                 cursor = null;
-            }
-        });
-        ;
-    }
-
-    public void toggleColorful()
-    {
-        view.getCanvas().invoke(false, new BasicUpdater()
-        {
-            public void update(GL2 gl)
-            {
-                colorful = !colorful;
             }
         });
         ;

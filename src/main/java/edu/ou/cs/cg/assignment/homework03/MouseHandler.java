@@ -1,15 +1,19 @@
 //******************************************************************************
 // Copyright (C) 2016-2019 University of Oklahoma Board of Trustees.
 //******************************************************************************
-// Last modified: Wed Feb 27 17:33:41 2019 by Chris Weaver
+// Last modified: Fri Apr 30 2021 by Team 7
 //******************************************************************************
 // Major Modification History:
 //
 // 20160225 [weaver]:	Original file.
 // 20190227 [weaver]:	Updated to use model and asynchronous event handling.
+// 20210430 [team7]:	Final edits to project.
 //
 //******************************************************************************
-// Notes:
+// Notes: This documents contains structure of code used and given for use
+//        during the semester for our homeworks and were adopted for usage in
+//        our project. All the non-generic code unique to our project will
+//        have comments to explain its purpose.
 //
 //******************************************************************************
 
@@ -26,7 +30,7 @@ import edu.ou.cs.cg.utilities.Utilities;
  * The <CODE>MouseHandler</CODE> class.
  * <P>
  *
- * @author Chris Weaver
+ * @author Team 7
  * @version %I%, %G%
  */
 public final class MouseHandler extends MouseAdapter
@@ -61,12 +65,8 @@ public final class MouseHandler extends MouseAdapter
 
     public void mouseClicked(MouseEvent e)
     {
-        if (Utilities.isShiftDown(e))
-            model.setOriginInViewCoordinates(e.getPoint());
-        else
-        {
-            model.pop();
-        }
+    	// Trigger pop attempt when clicking the mouse
+    	model.pop();
     }
 
     public void mouseEntered(MouseEvent e)
@@ -81,12 +81,8 @@ public final class MouseHandler extends MouseAdapter
 
     public void mousePressed(MouseEvent e)
     {
-    	if (Utilities.isShiftDown(e))
-            model.setOriginInViewCoordinates(e.getPoint());
-        else
-        {
-            model.pop();
-        }
+    	// Trigger pop attempt when clicking the mouse
+    	model.pop();
     }
 
     public void mouseReleased(MouseEvent e)

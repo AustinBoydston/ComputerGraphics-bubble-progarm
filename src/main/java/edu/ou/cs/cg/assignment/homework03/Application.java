@@ -1,7 +1,7 @@
 //******************************************************************************
 // Copyright (C) 2016-2021 University of Oklahoma Board of Trustees.
 //******************************************************************************
-// Last modified: Tue Feb  9 17:35:39 2021 by Chris Weaver
+// Last modified: Fri Apr 30 2021 by Team 7
 //******************************************************************************
 // Major Modification History:
 //
@@ -10,9 +10,13 @@
 // 20200121 [weaver]:	Modified to set up OpenGL and UI on the Swing thread.
 // 20201215 [weaver]:	Added setIdentifyPixelScale() to canvas setup.
 // 20210209 [weaver]:	Added point smoothing for Hi-DPI displays.
+// 20210430 [team7]:	Final edits to project.
 //
 //******************************************************************************
-// Notes:
+// Notes: This documents contains structure of code used and given for use
+//        during the semester for our homeworks and were adopted for usage in
+//        our project. All the non-generic code unique to our project will
+//        have comments to explain its purpose.
 //
 // Warning! This code uses deprecated features of OpenGL, including immediate
 // mode vertex attribute specification, for sake of easier classroom learning.
@@ -35,7 +39,7 @@ import com.jogamp.opengl.awt.*;
 /**
  * The <CODE>Application</CODE> class.<P>
  *
- * @author  Chris Weaver
+ * @author  Team 7
  * @version %I%, %G%
  */
 public final class Application
@@ -85,7 +89,7 @@ public final class Application
 		GLCapabilities	capabilities = new GLCapabilities(profile);
 		//GLCanvas		canvas = new GLCanvas(capabilities);	// Single-buffer
 		GLJPanel		canvas = new GLJPanel(capabilities);	// Double-buffer
-		JFrame			frame = new JFrame("Bubble Pop");
+		JFrame			frame = new JFrame("Bubble Pop");		// Name of project
 
 		// Rectify display scaling issues when in Hi-DPI mode on macOS.
 		edu.ou.cs.cg.utilities.Utilities.setIdentityPixelScale(canvas);
