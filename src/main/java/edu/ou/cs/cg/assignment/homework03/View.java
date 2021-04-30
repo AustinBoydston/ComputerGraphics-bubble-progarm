@@ -19,19 +19,20 @@ package edu.ou.cs.cg.assignment.homework03;
 //import java.lang.*;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.*;
 import java.awt.geom.Point2D;
+import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.Random;
+import java.util.*;
+import javax.swing.*;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.awt.GLJPanel;
-import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.*;
+import com.jogamp.opengl.glu.*;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.texture.*;
 
 import edu.ou.cs.cg.utilities.Utilities;
 
@@ -59,6 +60,13 @@ public final class View
 
 	public static final GLUT			MYGLUT = new GLUT();
 	public static final Random			RANDOM = new Random();
+	
+	public static final String			RSRC = "images/";
+	private static final String[]		FILENAMES = 
+		{
+				"bubble.jpg",
+				"underwater.jpg"
+		};
 
 	//**********************************************************************
 	// Private Members
@@ -75,6 +83,8 @@ public final class View
 	private int						counter;	// Frame counter
 
 	private final Model				model;
+	
+	private Texture[]				textures;
 
 	private final KeyHandler			keyHandler;
 	private final MouseHandler			mouseHandler;
@@ -135,6 +145,7 @@ public final class View
 									true, true);
 
 		initPipeline(drawable);
+		initTextures(drawable);
 	}
 
 	public void	dispose(GLAutoDrawable drawable)
@@ -185,8 +196,61 @@ public final class View
 	private void	initPipeline(GLAutoDrawable drawable)
 	{
 		GL2	gl = drawable.getGL().getGL2();
+		
+		gl.glEnable(GL2.GL_LIGHTING);
+		gl.glEnable(GL2.GL_NORMALIZE);
+		
+		// Prepare light parameters.
+        float SHINE_ALL_DIRECTIONS = 1;
+        float[] lightPos = {640, 360, 30, SHINE_ALL_DIRECTIONS};
+        float[] lightColorAmbient = {0.5f, 0.5f, 0.5f, 1f};
+        float[] lightColorSpecular = {0.8f, 0.8f, 0.8f, 1f};
+
+        // Set light parameters.
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPos, 0);
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightColorAmbient, 0);
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
+
+        // Enable lighting in GL.
+        gl.glEnable(GL2.GL_LIGHT1);
+
+        // Set material properties.
+        //float[] rgba = {1f, 1f, 1f};
+        //gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, rgba, 0);
+        //gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, rgba, 0);
+        //gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, 1f);
 
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black background
+	}
+	
+	private void	initTextures(GLAutoDrawable drawable)
+	{
+		GL2 gl = drawable.getGL().getGL2();
+		
+		textures = new Texture[FILENAMES.length];
+		
+		for (int i = 0; i < FILENAMES.length; i++)
+		{
+			try
+			{
+				URL url = View.class.getResource(RSRC + FILENAMES[i]);
+				
+				if (url != null)
+				{
+					textures[i] = TextureIO.newTexture(url, false, TextureIO.JPG);
+					
+					textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
+					textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+					textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE);
+					textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
+				}
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+				System.exit(1);;
+			}
+		}
 	}
 
 	private void	updatePipeline(GLAutoDrawable drawable)
@@ -280,18 +344,34 @@ public final class View
     
     private void background(GL2 gl)
     {
-    	gl.glBegin(GL2.GL_POLYGON);
+    	Texture tex = textures[1];
+    	tex.enable(gl);
+    	tex.bind(gl);
+    	gl.glBegin(GL2.GL_QUADS);
+    	TextureCoords texcoords = tex.getImageTexCoords();
     	
-    	setColor(gl, 0, 0, 140);
-    	gl.glVertex2d(0,0);
-    	setColor(gl, 0, 0, 140);
-    	gl.glVertex2d(1280, 0);
-    	setColor(gl, 255, 255, 255);
-    	gl.glVertex2d(1280, 720);
-    	setColor(gl, 255, 255, 255);
-    	gl.glVertex2d(0, 720);
+    	float[] emit = new float[] {0.5f, 0.5f, 0.5f, 1.0f};
+    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+    	
+    	//setColor(gl, 0, 0, 140);
+    	gl.glTexCoord2f(texcoords.left(), texcoords.bottom());
+    	gl.glVertex2f(0.0f,0.0f);
+    	
+    	//setColor(gl, 0, 0, 140);
+    	gl.glTexCoord2f(texcoords.left(), texcoords.top());
+    	gl.glVertex2f(0.0f, 720.0f);
+    	
+    	//setColor(gl, 255, 255, 255);
+    	gl.glTexCoord2f(texcoords.right(), texcoords.top());
+    	gl.glVertex2f(1280.0f, 720.0f);
+    	
+    	//setColor(gl, 255, 255, 255);
+    	gl.glTexCoord2f(texcoords.right(), texcoords.bottom());
+    	gl.glVertex2f(1280.0f, 0.0f);
     	
     	gl.glEnd();
+
+    	tex.disable(gl);
     }
    
 	private void drawBubble(GL2 gl)
@@ -327,11 +407,12 @@ public final class View
 	            r = model.getBubbleList().get(j).getRadius();
 	            
 			    // Fill the bubble with cyan
-			    gl.glBegin(GL.GL_TRIANGLE_FAN);
+			    gl.glBegin(GL2.GL_POLYGON);
 			
-			    setColor(gl, 0, 255, 255);            // Cyan
-			    gl.glVertex2d(cx, cy);
-			
+			    //setColor(gl, 0, 255, 255);            // Cyan
+			    float[] emit = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+			    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+			    
 			    for (int i=0; i<SIDES_BUBBLE+1; i++)      // 18 sides
 			    {
 			        gl.glVertex2d(cx + r * Math.cos(theta), cy + r * Math.sin(theta));
