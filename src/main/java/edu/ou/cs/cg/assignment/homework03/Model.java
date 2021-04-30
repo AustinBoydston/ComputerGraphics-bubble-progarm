@@ -86,19 +86,18 @@ public final class Model
     // Public Methods (Access Variables)
     // **********************************************************************
 
-    public void updatePosition(int index, int direction)
+    public void updatePosition(int index)
     {
         int x = bubbles.get(index).getX();
         int y = bubbles.get(index).getY();
+        int dx = bubbles.get(index).getDirectionX();
+        int dy = bubbles.get(index).getDirectionY();
         
         //update position based on direction
-        switch(direction)
-        {
-            case 0: x += 1; bubbles.get(index).setX(x); break;
-            case 1: x -= 1; bubbles.get(index).setX(x); break;
-            case 2: y += 1; bubbles.get(index).setY(y); break;
-            case 3: y -= 1; bubbles.get(index).setY(y); break;
-        }
+        x = x + dx;
+        y = y + dy;
+        bubbles.get(index).setPos(x, y);
+        
     }
     
     //return the list of bubbles
@@ -108,10 +107,10 @@ public final class Model
     }
 
     //create a new bubble
-    public void createBubble(int x, int y, int r, int[] c, int dir)
+    public void createBubble(int x, int y, int r, int[] c, int dx, int dy)
     {
 
-        bubbles.add(new Bubble(x, y, r, c, dir));
+        bubbles.add(new Bubble(x, y, r, c, dx, dy));
     }
 
     //pop the bubble the cursor is over

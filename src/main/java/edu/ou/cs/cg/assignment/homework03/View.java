@@ -348,25 +348,25 @@ public final class View
     	tex.enable(gl);
     	tex.bind(gl);
     	gl.glBegin(GL2.GL_QUADS);
-    	TextureCoords texcoords = tex.getImageTexCoords();
+    	TextureCoords coords = tex.getImageTexCoords();
     	
     	float[] emit = new float[] {0.5f, 0.5f, 0.5f, 1.0f};
     	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
     	
     	//setColor(gl, 0, 0, 140);
-    	gl.glTexCoord2f(texcoords.left(), texcoords.bottom());
+    	gl.glTexCoord2f(coords.left(), coords.bottom());
     	gl.glVertex2f(0.0f,0.0f);
     	
     	//setColor(gl, 0, 0, 140);
-    	gl.glTexCoord2f(texcoords.left(), texcoords.top());
+    	gl.glTexCoord2f(coords.left(), coords.top());
     	gl.glVertex2f(0.0f, 720.0f);
     	
     	//setColor(gl, 255, 255, 255);
-    	gl.glTexCoord2f(texcoords.right(), texcoords.top());
+    	gl.glTexCoord2f(coords.right(), coords.top());
     	gl.glVertex2f(1280.0f, 720.0f);
     	
     	//setColor(gl, 255, 255, 255);
-    	gl.glTexCoord2f(texcoords.right(), texcoords.bottom());
+    	gl.glTexCoord2f(coords.right(), coords.bottom());
     	gl.glVertex2f(1280.0f, 0.0f);
     	
     	gl.glEnd();
@@ -384,6 +384,12 @@ public final class View
         int xSpawn = 400;
         int ySpawn = 300;
         Random randDir = new Random();
+        int dir = 0;
+        
+        if (randDir.nextBoolean() == true)
+        	dir = 1;
+        else
+        	dir = -1;
         
         //might delete later
         int[] temp = {0, 0, 0};
@@ -392,7 +398,7 @@ public final class View
         if( counter % 60 == 0)
         {
             //                                      Select a random number between 0 and 3 inclusive to ditermine the direction
-            model.createBubble(randDir.nextInt(200) + xSpawn , randDir.nextInt(200) + ySpawn, 20, temp,  randDir.nextInt(4));
+            model.createBubble(randDir.nextInt(200) + xSpawn , randDir.nextInt(200) + ySpawn, 20, temp,  dir*(randDir.nextInt(2)+1), dir*(randDir.nextInt(2)+1));
         }
         
         
@@ -410,20 +416,28 @@ public final class View
 			    gl.glBegin(GL2.GL_POLYGON);
 			
 			    //setColor(gl, 0, 255, 255);            // Cyan
-			    float[] emit = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
-			    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+			    float[] emit = new float[] {1.0f, 1.0f, 1.0f, 1.0f};
+			    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+			    
+			    Texture tex = textures[0];
+		    	tex.enable(gl);
+		    	tex.bind(gl);
+		    	TextureCoords coords = tex.getImageTexCoords();
 			    
 			    for (int i=0; i<SIDES_BUBBLE+1; i++)      // 18 sides
 			    {
+			    	gl.glTexCoord2f(0.5f*(((float) Math.cos(theta))+1.0f), 0.5f*(((float) Math.sin(theta))+1.0f));
 			        gl.glVertex2d(cx + r * Math.cos(theta), cy + r * Math.sin(theta));
 			        theta += BUBBLE_ANGLE;
 			    }
 			
 			    gl.glEnd();
 			    
+			    tex.disable(gl);
+			    
 			    
 			    //update position of bubble
-			    model.updatePosition(j, model.getBubbleList().get(j).getDirection());
+			    model.updatePosition(j);
 			    
 			    
 			    //check if bubble is still in the frame

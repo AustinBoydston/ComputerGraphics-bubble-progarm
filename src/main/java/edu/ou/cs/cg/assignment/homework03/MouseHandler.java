@@ -81,6 +81,12 @@ public final class MouseHandler extends MouseAdapter
 
     public void mousePressed(MouseEvent e)
     {
+    	if (Utilities.isShiftDown(e))
+            model.setOriginInViewCoordinates(e.getPoint());
+        else
+        {
+            model.pop();
+        }
     }
 
     public void mouseReleased(MouseEvent e)

@@ -7,16 +7,18 @@ public class Bubble
     private int y;
     private int radius;
     private int[] color;
-    private int direction;
+    private int dx;
+    private int dy;
     
     //construction
-    Bubble(int x, int y, int r, int[] c, int dir)
+    Bubble(int x, int y, int r, int[] c, int dx, int dy)
     {
         this.x = x;
         this.y = y;
         radius = r;
         color = c;
-        direction = dir;
+        this.dx = dx;
+        this.dy = dy;
     }
 
     
@@ -26,18 +28,14 @@ public class Bubble
         return x;
     }
 
-    public void setX(int x)
-    {
-        this.x = x;
-    }
-
     public int getY()
     {
         return y;
     }
 
-    public void setY(int y)
+    public void setPos(int x, int y)
     {
+    	this.x = x;
         this.y = y;
     }
 
@@ -61,14 +59,14 @@ public class Bubble
         this.color = color;
     }
 
-    public int getDirection()
+    public int getDirectionX()
     {
-        return direction;
+        return dx;
     }
-
-    public void setDirection(int direction)
+    
+    public int getDirectionY()
     {
-        this.direction = direction;
+    	return dy;
     }
     
     
