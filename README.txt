@@ -22,3 +22,5 @@ MouseHandler.java: Handling of mouse input
 KeyHandler.java: Handling of keyboard input
 Application.java: Startup for the project
 Image/: location of textures
+
+Note: The directory EasyRunSubmission allows for quick access to a bat file of the working project through the directory of EasyRunSubmission/build/install/base/bin/hw03.bat
