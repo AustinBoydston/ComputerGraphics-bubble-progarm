@@ -244,7 +244,7 @@ def createScript(project, jvmOpts, name, mainClass)
 //createScript(project, altJvmArgs, 'hw03',
 //             'edu.ou.cs.cg.assignment.homework03.Application')
 
-createScript(project, altJvmArgs, 'Bubble Pop', 'edu.ou.cs.cg.assignment.homework03.Application')
+createScript(project, altJvmArgs, 'BubblePop', 'edu.ou.cs.cg.assignment.homework03.Application')
 
 ////createScript(project, altJvmArgs, 'hw04',
 ////             'edu.ou.cs.cg.assignment.homework04.Application')
