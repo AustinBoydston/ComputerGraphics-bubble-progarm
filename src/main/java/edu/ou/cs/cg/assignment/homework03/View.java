@@ -415,6 +415,18 @@ public final class View
 
     	tex.disable(gl);
     }
+    
+    // Method adopted from homework06 to simulate natural cascade effects for bubble
+    // generation
+    public static int randomCascade(double d)
+	{
+		int	n = 0;
+
+		while (RANDOM.nextDouble() > d)
+			n++;
+
+		return n;
+	}
    
     // Method for generating stored bubbles
 	private void drawBubble(GL2 gl)
@@ -423,7 +435,7 @@ public final class View
 	    double theta = BUBBLE_ANGLE;		// Angle for one side of a bubble
         int cx = 100;						// Initialization of x coordinate 
         int cy = 100;						// Initialization of y coordinate
-        int r = 10;							// Radius of bubbles
+        int r = 20;							// Radius of bubbles
         int xSpawn = 400;					// Initial spawning coordinate for x
         int ySpawn = 300;					// Initial spawning coordinate for y
         int dirx = 0;						// Initialization of x rate of change
@@ -432,24 +444,27 @@ public final class View
         // Create new bubble every 1 second (60 frames)
         if( counter % 60 == 0)
         {
-        	// Boolean for determining x direction
-        	if (RANDOM.nextBoolean() == true)
-            	dirx = 1;
-            else
-            	dirx = -1;
-        	
-        	// Boolean for determining y direction
-        	if (RANDOM.nextBoolean() == true)
-        		diry = 1;
-        	else
-        		diry = -1;
-        	
-            // Create a new bubble using random numbers between 0 and 200 for the intial position
-        	// of spawn, the specified radius above, and random numbers between 1 and 3 for
-        	// determining rate of change of each coordinate with dirx and diry being the decider
-        	// for inversing the value
-            model.createBubble(RANDOM.nextInt(200) + xSpawn , RANDOM.nextInt(200) + ySpawn, 
-            		r + RANDOM.nextInt(40), dirx*(RANDOM.nextInt(2)+1), diry*(RANDOM.nextInt(2)+1));
+        	for (int l = 0; l < randomCascade(0.8) + 1; l++)
+        	{
+	        	// Boolean for determining x direction
+	        	if (RANDOM.nextBoolean() == true)
+	            	dirx = 1;
+	            else
+	            	dirx = -1;
+	        	
+	        	// Boolean for determining y direction
+	        	if (RANDOM.nextBoolean() == true)
+	        		diry = 1;
+	        	else
+	        		diry = -1;
+	        	
+	            // Create a new bubble using random numbers between 0 and 200 for the intial position
+	        	// of spawn, the specified radius above, and random numbers between 1 and 3 for
+	        	// determining rate of change of each coordinate with dirx and diry being the decider
+	        	// for inversing the value
+	            model.createBubble(RANDOM.nextInt(200) + xSpawn , RANDOM.nextInt(200) + ySpawn, 
+	            		r, dirx*(RANDOM.nextInt(2)+1), diry*(RANDOM.nextInt(2)+1));
+        	}
         }
         
         //draw bubbles if there are any stored in the list in Model
@@ -552,7 +567,7 @@ public final class View
 				    		{
 				    			// Set a new radius, a combination of both original radii
 				    			// of a and b, to bubble b
-				    			model.getBubbleList().get(i).setRadius((int)((arad + brad) * 0.65));
+				    			model.getBubbleList().get(i).setRadius(arad + brad);
 				    			// Set a new rate of change by combining both bubbles' rates for
 				    			// bubble b
 				    			model.getBubbleList().get(i).setDirection(adx + bdx, ady + bdy);
