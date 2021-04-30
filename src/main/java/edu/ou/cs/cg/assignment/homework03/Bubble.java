@@ -69,6 +69,11 @@ public class Bubble
     	return dy;
     }
     
+    public void setDirection(int dx, int dy)
+    {
+    	this.dx = dx;
+    	this.dy = dy;
+    }
     
     
 }

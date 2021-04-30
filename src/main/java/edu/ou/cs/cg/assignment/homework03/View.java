@@ -264,9 +264,9 @@ public final class View
 		float			ymin = (float)(origin.y - 1.0);
 		float			ymax = (float)(origin.y + 1.0);
 
-		gl.glMatrixMode(GL2.GL_PROJECTION);		// Prepare for matrix xform
-		gl.glLoadIdentity();						// Set to identity matrix
-		glu.gluOrtho2D(xmin, xmax, ymin, ymax);	// 2D translate and scale
+		//gl.glMatrixMode(GL2.GL_PROJECTION);		// Prepare for matrix xform
+		//gl.glLoadIdentity();						// Set to identity matrix
+		//glu.gluOrtho2D(xmin, xmax, ymin, ymax);	// 2D translate and scale
 	}
 	
 	private void    setScreenProjection(GL2 gl)
@@ -340,9 +340,6 @@ public final class View
         setColor(gl, r, g, b, 255);
     }
     
-	private static final int       SIDES_BUBBLE = 18;
-    private static final double BUBBLE_ANGLE = 2.0 * Math.PI / SIDES_BUBBLE;
-    
     private void background(GL2 gl)
     {
     	Texture tex = textures[1];
@@ -352,7 +349,15 @@ public final class View
     	TextureCoords coords = tex.getImageTexCoords();
     	
     	float[] emit = new float[] {0.5f, 0.5f, 0.5f, 1.0f};
-    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+	    float[] shine = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
+	    float[] amb = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+	    float[] spec = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
+	    float[] dif = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+	    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+	    gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, shine, 0);
+	    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, amb, 0);
+	    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, dif, 0);
+	    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, spec, 0);
     	
     	//setColor(gl, 0, 0, 140);
     	gl.glTexCoord2f(coords.left(), coords.bottom());
@@ -374,23 +379,21 @@ public final class View
 
     	tex.disable(gl);
     }
+    
+    private static final int       SIDES_BUBBLE = 18;
+    private static final double BUBBLE_ANGLE = 2.0 * Math.PI / SIDES_BUBBLE;
    
 	private void drawBubble(GL2 gl)
 	{
 	    
-	    double theta = 0.20 * BUBBLE_ANGLE;
+	    double theta = BUBBLE_ANGLE;
         int cx = 100;
         int cy = 100;
         int r = 20;
         int xSpawn = 400;
         int ySpawn = 300;
-        Random randDir = new Random();
-        int dir = 0;
-        
-        if (randDir.nextBoolean() == true)
-        	dir = 1;
-        else
-        	dir = -1;
+        int dirx = 0;
+        int diry = 0;
         
         //might delete later
         int[] temp = {0, 0, 0};
@@ -398,8 +401,17 @@ public final class View
         //create new bubble
         if( counter % 60 == 0)
         {
+        	if (RANDOM.nextBoolean() == true)
+            	dirx = 1;
+            else
+            	dirx = -1;
+        	
+        	if (RANDOM.nextBoolean() == true)
+        		diry = 1;
+        	else
+        		diry = -1;
             //                                      Select a random number between 0 and 3 inclusive to ditermine the direction
-            model.createBubble(randDir.nextInt(200) + xSpawn , randDir.nextInt(200) + ySpawn, 20, temp,  dir*(randDir.nextInt(2)+1), dir*(randDir.nextInt(2)+1));
+            model.createBubble(RANDOM.nextInt(200) + xSpawn , RANDOM.nextInt(200) + ySpawn, r, temp,  dirx*(RANDOM.nextInt(2)+1), diry*(RANDOM.nextInt(2)+1));
         }
         
         
@@ -417,8 +429,16 @@ public final class View
 			    gl.glBegin(GL2.GL_POLYGON);
 			
 			    //setColor(gl, 0, 255, 255);            // Cyan
-			    float[] emit = new float[] {1.0f, 1.0f, 1.0f, 1.0f};
-			    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+			    float[] emit = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+			    float[] shine = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
+			    float[] amb = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+			    float[] spec = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
+			    float[] dif = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+			    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+			    gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, shine, 0);
+			    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, amb, 0);
+			    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, dif, 0);
+			    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, spec, 0);
 			    
 			    Texture tex = textures[0];
 		    	tex.enable(gl);
@@ -442,6 +462,42 @@ public final class View
 			    //update position of bubble
 			    model.updatePosition(j);
 			    
+			    // check for overlap
+			    for (int i = 0; i < model.getBubbleList().size(); i++)
+			    {
+			    	if ( i != j)
+			    	{
+				    	Bubble a = model.getBubbleList().get(j);
+				    	Bubble b = model.getBubbleList().get(i);
+				    	int arad = a.getRadius();
+				    	int brad = b.getRadius();
+				    	double ax = (double) a.getX();
+				    	double ay = (double) a.getY();
+				    	double bx = (double) b.getX();
+				    	double by = (double) b.getY();
+				    	int adx = a.getDirectionX();
+				    	int ady = a.getDirectionY();
+				    	int bdx = b.getDirectionX();
+				    	int bdy = b.getDirectionY();
+				    	
+				    	double dist =  Math.sqrt(((ax - bx)*(ax - bx)) + ((ay - by)*(ay - by)));
+				    	if (dist < (double) (arad + brad))
+				    	{
+				    		if (arad >= brad)
+				    		{
+				    			model.getBubbleList().get(j).setRadius(arad + brad);
+				    			model.getBubbleList().get(j).setDirection(adx + bdx, ady + bdy);
+				    			model.removeBubble(i);
+				    		}
+				    		else if (brad > arad)
+				    		{
+				    			model.getBubbleList().get(i).setRadius(arad + brad);
+				    			model.getBubbleList().get(i).setDirection(adx + bdx, ady + bdy);
+				    			model.removeBubble(j);
+				    		}
+				    	}
+			    	}
+			    }
 			    
 			    //check if bubble is still in the frame
 			    if(cx < 0 || cx > 1280 || cy < 0 || cy > 720)
@@ -453,11 +509,125 @@ public final class View
         }
 	}
 	
+	// draw popping animation
 	private void drawPopped(GL2 gl)
 	{
 		if (!model.getPoppedList().isEmpty())
 		{
-			//for (int i = 0; i <model.getPopped)
+			for (int i = 0; i < model.getPoppedList().size(); i++)
+			{
+				double cx = (double) model.getPoppedList().get(i).getX();
+				double cy = (double) model.getPoppedList().get(i).getY();
+				int timer = model.getPoppedList().get(i).getTimer();
+				double r = model.getPoppedList().get(i).getRadius();
+				
+				 float[] emit = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+				    float[] shine = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
+				    float[] amb = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+				    float[] spec = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
+				    float[] dif = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+				    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, emit, 0);
+				    gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, shine, 0);
+				    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, amb, 0);
+				    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, dif, 0);
+				    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, spec, 0);
+			    
+				// quadratic used to account for gravity
+				double gy = 0.1*timer*timer;
+				
+				//quadratic used to account for gravity with initial upward velocity
+				double gyu = 0;
+				if (timer > 1)
+					gyu = 0.1*timer*timer - 2*timer;
+				
+				// water droplets
+				double theta = BUBBLE_ANGLE/20;
+				
+				// first droplet (right)
+				gl.glBegin(GL2.GL_POLYGON);
+				
+				gl.glVertex2d(cx + timer*2 + timer, cy - gy);					// peak
+				gl.glVertex2d(cx + 20 + timer*2, cy + 10 - timer - gy);
+				for (int j=0; j<20; j++)
+				{
+					gl.glVertex2d((cx+20 + timer*2) + 10 * Math.cos(theta), cy - gy - timer + 10 * Math.sin(theta));
+		        	theta += BUBBLE_ANGLE;
+				}
+				gl.glVertex2d(cx + 20 + timer*2, cy - 10 - timer - gy);
+				
+				gl.glEnd();
+				
+				// second droplet (bottom)
+				gl.glBegin(GL2.GL_POLYGON);
+				
+				gl.glVertex2d(cx, cy - gy);					// peak
+				gl.glVertex2d(cx + 10, cy - 20 - gy);
+				for (int j=0; j<20; j++)
+				{
+					gl.glVertex2d((cx) + 10 * Math.cos(theta), (cy-20) - gy + 10 * Math.sin(theta));
+		        	theta += BUBBLE_ANGLE;
+				}
+				gl.glVertex2d(cx -10, cy - 20 - gy);
+				
+				gl.glEnd();
+				
+				// third droplet (left)
+				gl.glBegin(GL2.GL_POLYGON);
+				
+				gl.glVertex2d(cx - timer*2 - timer, cy - gy);					// peak
+				gl.glVertex2d(cx - 20 - timer*2, cy + 10 - timer - gy);
+				for (int j=0; j<20; j++)
+				{
+					gl.glVertex2d((cx-20 - timer*2) + 10 * Math.cos(theta), cy - timer - gy + 10 * Math.sin(theta));
+		        	theta += BUBBLE_ANGLE;
+				}
+				gl.glVertex2d(cx - 20 - timer*2, cy - timer - 10 - gy);
+				
+				gl.glEnd();
+				
+				// fourth droplet (up)
+				gl.glBegin(GL2.GL_POLYGON);
+				
+				gl.glVertex2d(cx, cy - gyu);					// peak
+				gl.glVertex2d(cx + 10, cy + 21 - 2*gyu);
+				for (int j=0; j<20; j++)
+				{
+					gl.glVertex2d((cx) + 10 * Math.cos(theta), (cy + 21) - 2*gyu + 10 * Math.sin(theta));
+		        	theta += BUBBLE_ANGLE;
+				}
+				gl.glVertex2d(cx -10, cy + 21 - 2*gyu);
+				
+				gl.glEnd();
+				
+				// star pop
+				if (timer < 6)
+				{
+					double beta = 0.5*Math.PI;
+					int sides = 6;
+					double delta = Math.PI/sides;
+					
+					// central popped mass
+					gl.glBegin(GL.GL_TRIANGLE_FAN);
+					
+					gl.glVertex2d(cx, cy);
+					for (int k = 0; k < sides; k++)
+					{
+						gl.glVertex2d(cx + (40.0*(r/20.0))*Math.cos(beta), cy + (40.0*(r/20.0))*Math.sin(beta));
+						beta += delta;
+						
+						gl.glVertex2d(cx + (16.0*(r/20.0))*Math.cos(beta), cy + (16.0*(r/20.0))*Math.sin(beta));
+						beta += delta;
+					}
+					gl.glVertex2d(cx + (40.0*(r/20.0))*Math.cos(beta), cy + (40.0*(r/20.0))*Math.sin(beta));
+					
+					gl.glEnd();
+				}
+				
+				timer++;
+				model.getPoppedList().get(i).setTimer(timer);
+				if (timer > 20)
+					model.removePopped(i);
+			}
 		}
 	}
 }

@@ -5,16 +5,16 @@ public class Pop
 
     private int x;
     private int y;
-    private int radius;
+    private double radius;
     private int timer;
     
     //construction
-    Pop(int x, int y, int r)
+    Pop(int x, int y, double r)
     {
         this.x = x;
         this.y = y;
         radius = r;
-        timer = 0;
+        timer = 1;
     }
 
     
@@ -29,22 +29,23 @@ public class Pop
         return y;
     }
 
-    public void setPos(int x, int y)
-    {
-    	this.x = x;
-        this.y = y;
-    }
-
-    public int getRadius()
+    public double getRadius()
     {
         return radius;
     }
-
-    public void setRadius(int radius)
+    
+    public int getTimer()
     {
-        this.radius = radius;
+    	return timer;
     }
     
+    public void setRadius(double r)
+    {
+    	radius = r;
+    }
     
-    
+    public void setTimer(int t)
+    {
+    	timer = t;
+    } 
 }

@@ -124,16 +124,6 @@ public final class Model
     // **********************************************************************
     // Public Methods (Modify Variables)
     // **********************************************************************
-
-    public void createPopped(int x, int y, int r)
-    {
-    	view.getCanvas().invoke(false, new BasicUpdater() {
-    		public void update(GL2 gl)
-    		{
-    			popped.add(new Pop(x, y, r));
-    		}
-    	});;
-    }
     
     public void createBubble(int x, int y, int r, int[] c, int dx, int dy)
     {
@@ -178,12 +168,34 @@ public final class Model
     	                    if (cursor.y < bubbles.get(i).getY() + bubbles.get(i).getRadius()
     	                            && cursor.y > bubbles.get(i).getY() - bubbles.get(i).getRadius())
     	                    {
+    	                    	popped.add(new Pop(bubbles.get(i).getX(), bubbles.get(i).getY(), 
+    	                    			(double) bubbles.get(i).getRadius()));
     	                        bubbles.remove(i);
     	                        popCount++;
     	                    }
     	                }
     	            }
     	        }
+    		}
+    	});;
+    }
+    
+    public void removeBubble(int i)
+    {
+    	view.getCanvas().invoke(false, new BasicUpdater() {
+    		public void update(GL2 gl)
+    		{
+    			bubbles.remove(i);
+    		}
+    	});;
+    }
+    
+    public void removePopped(int i)
+    {
+    	view.getCanvas().invoke(false, new BasicUpdater() {
+    		public void update(GL2 gl)
+    		{
+    			popped.remove(i);
     		}
     	});;
     }
