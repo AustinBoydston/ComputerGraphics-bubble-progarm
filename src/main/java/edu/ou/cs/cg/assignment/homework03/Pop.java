@@ -14,7 +14,7 @@ public class Pop
         this.x = x;
         this.y = y;
         radius = r;
-        timer = 30;
+        timer = 0;
     }
 
     

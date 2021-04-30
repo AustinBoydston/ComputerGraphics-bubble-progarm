@@ -65,7 +65,8 @@ public final class Model
     private boolean colorful; // Show rainbow version?
     private int popCount;
 
-    private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();;
+    private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();
+    private ArrayList<Pop> popped = new ArrayList<Pop>();
 
     // **********************************************************************
     // Constructors and Finalizer
@@ -85,53 +86,16 @@ public final class Model
     // **********************************************************************
     // Public Methods (Access Variables)
     // **********************************************************************
-
-    public void updatePosition(int index)
-    {
-        int x = bubbles.get(index).getX();
-        int y = bubbles.get(index).getY();
-        int dx = bubbles.get(index).getDirectionX();
-        int dy = bubbles.get(index).getDirectionY();
-        
-        //update position based on direction
-        x = x + dx;
-        y = y + dy;
-        bubbles.get(index).setPos(x, y);
-        
-    }
     
     //return the list of bubbles
     public ArrayList<Bubble> getBubbleList()
     {
         return bubbles;
     }
-
-    //create a new bubble
-    public void createBubble(int x, int y, int r, int[] c, int dx, int dy)
+    
+    public ArrayList<Pop> getPoppedList()
     {
-
-        bubbles.add(new Bubble(x, y, r, c, dx, dy));
-    }
-
-    //pop the bubble the cursor is over
-    public void pop()
-    {
-        if (!bubbles.isEmpty())
-        {
-            for (int i = 0; i < bubbles.size(); i++)
-            {
-                if (cursor.x < bubbles.get(i).getX() + bubbles.get(i).getRadius()
-                        && cursor.x > bubbles.get(i).getX() - bubbles.get(i).getRadius())
-                {
-                    if (cursor.y < bubbles.get(i).getY() + bubbles.get(i).getRadius()
-                            && cursor.y > bubbles.get(i).getY() - bubbles.get(i).getRadius())
-                    {
-                        bubbles.remove(i);
-                        popCount++;
-                    }
-                }
-            }
-        }
+    	return popped;
     }
 
     public Point2D.Double getOrigin()
@@ -161,6 +125,69 @@ public final class Model
     // Public Methods (Modify Variables)
     // **********************************************************************
 
+    public void createPopped(int x, int y, int r)
+    {
+    	view.getCanvas().invoke(false, new BasicUpdater() {
+    		public void update(GL2 gl)
+    		{
+    			popped.add(new Pop(x, y, r));
+    		}
+    	});;
+    }
+    
+    public void createBubble(int x, int y, int r, int[] c, int dx, int dy)
+    {
+    	view.getCanvas().invoke(false, new BasicUpdater() {
+    		public void update(GL2 gl)
+    		{
+    			 bubbles.add(new Bubble(x, y, r, c, dx, dy));
+    		}
+    	});;
+    }
+    
+    public void updatePosition(int index)
+    {
+    	view.getCanvas().invoke(false, new BasicUpdater() {
+    		public void update(GL2 gl)
+    		{
+    			int x = bubbles.get(index).getX();
+    	        int y = bubbles.get(index).getY();
+    	        int dx = bubbles.get(index).getDirectionX();
+    	        int dy = bubbles.get(index).getDirectionY();
+    	        
+    	        //update position based on direction
+    	        x = x + dx;
+    	        y = y + dy;
+    	        bubbles.get(index).setPos(x, y);
+    		}
+    	});;
+    }
+    
+    public void pop()
+    {
+    	view.getCanvas().invoke(false, new BasicUpdater() {
+    		public void update(GL2 gl)
+    		{
+    			if (!bubbles.isEmpty())
+    	        {
+    	            for (int i = 0; i < bubbles.size(); i++)
+    	            {
+    	                if (cursor.x < bubbles.get(i).getX() + bubbles.get(i).getRadius()
+    	                        && cursor.x > bubbles.get(i).getX() - bubbles.get(i).getRadius())
+    	                {
+    	                    if (cursor.y < bubbles.get(i).getY() + bubbles.get(i).getRadius()
+    	                            && cursor.y > bubbles.get(i).getY() - bubbles.get(i).getRadius())
+    	                    {
+    	                        bubbles.remove(i);
+    	                        popCount++;
+    	                    }
+    	                }
+    	            }
+    	        }
+    		}
+    	});;
+    }
+    
     public void setOriginInSceneCoordinates(Point2D.Double q)
     {
         view.getCanvas().invoke(false, new BasicUpdater()

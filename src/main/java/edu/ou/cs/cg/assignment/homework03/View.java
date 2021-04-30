@@ -327,6 +327,7 @@ public final class View
 	    background(gl);
 		setColor(gl, 0, 0, 0);
 	    drawBubble(gl);
+	    drawPopped(gl);
 	}
 
 	private void   setColor(GL2 gl, int r, int g, int b, int a)
@@ -450,8 +451,14 @@ public final class View
 			    }
 	        }
         }
-	    setColor(gl, 0, 0, 0);
-	    
+	}
+	
+	private void drawPopped(GL2 gl)
+	{
+		if (!model.getPoppedList().isEmpty())
+		{
+			//for (int i = 0; i <model.getPopped)
+		}
 	}
 }
 
