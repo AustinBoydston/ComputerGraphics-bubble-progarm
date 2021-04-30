@@ -9,51 +9,59 @@ public class Pop
     private int y;						// y coordinate of pop origin
     private double radius;				// radius used for drawing
     private int timer;					// timer of frames spent active
+    private float[] color;				// float[] for material color
     
-    // constructor
-    Pop(int x, int y, double r)
+    // Constructor
+    Pop(int x, int y, double r, float[] c)
     {
         this.x = x;
         this.y = y;
         radius = r;
         timer = 1;
+        color = c;
     }
 
-    // getters and setters
+    // Getters and setters
     
-    // returns the x coordinate
+    // Returns the x coordinate
     public int getX()
     {
         return x;
     }
 
-    // return the y coordinate
+    // Return the y coordinate
     public int getY()
     {
         return y;
     }
 
-    // returns the radius
+    // Returns the radius
     public double getRadius()
     {
         return radius;
     }
     
-    // returns the timer
+    // Returns the timer
     public int getTimer()
     {
     	return timer;
     }
     
-    // changes the radius
+    // Changes the radius
     public void setRadius(double r)
     {
     	radius = r;
     }
     
-    // changes the timer
+    // Changes the timer
     public void setTimer(int t)
     {
     	timer = t;
     } 
+    
+    // Returns material color
+    public float[] getColor()
+    {
+    	return color;
+    }
 }

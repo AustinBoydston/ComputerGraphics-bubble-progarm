@@ -99,6 +99,10 @@ public final class KeyHandler extends KeyAdapter
 
 			case KeyEvent.VK_NUMPAD9:
 				p.x += a;		p.y += a;		break;
+				
+			// Toggles colorful bubbles
+			case KeyEvent.VK_C:
+				model.toggleColorful(); break;
 			
 			// Funcitonality to allow for popping with space press when cursor
 			// is above the bubble

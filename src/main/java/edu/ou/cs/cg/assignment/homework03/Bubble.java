@@ -10,68 +10,74 @@ public class Bubble
     private int radius;			// radius of the bubble
     private int dx;				// rate of change for x coordinate
     private int dy;				// rate of change for y coordinate
+    private float[] emit;		// material color
     
-    // constructor
-    Bubble(int x, int y, int r, int dx, int dy)
+    // Constructor
+    Bubble(int x, int y, int r, int dx, int dy, float[] emit)
     {
         this.x = x;
         this.y = y;
         radius = r;
         this.dx = dx;
         this.dy = dy;
+        this.emit = emit;
     }
 
-    //getters and setters
+    // Getters and setters
     
-    // returns the x coordinate
+    // Returns the x coordinate
     public int getX()
     {
         return x;
     }
 
-    // returns the y coordinate
+    // Returns the y coordinate
     public int getY()
     {
         return y;
     }
 
-    // changes the current coordinates
+    // Changes the current coordinates
     public void setPos(int x, int y)
     {
     	this.x = x;
         this.y = y;
     }
 
-    // returns the radius
+    // Returns the radius
     public int getRadius()
     {
         return radius;
     }
 
-    // changes the radius
+    // Changes the radius
     public void setRadius(int radius)
     {
         this.radius = radius;
     }
 
-    // returns the rate of change for x
+    // Returns the rate of change for x
     public int getDirectionX()
     {
         return dx;
     }
     
-    // returns the rate of change for y
+    // Returns the rate of change for y
     public int getDirectionY()
     {
     	return dy;
     }
     
-    // changes the rate of direction
+    // Changes the rate of direction
     public void setDirection(int dx, int dy)
     {
     	this.dx = dx;
     	this.dy = dy;
     }
     
-    
+    // Returns the color float[] for materials
+    public float[] getColor()
+    {
+    	return emit;
+    }
 }

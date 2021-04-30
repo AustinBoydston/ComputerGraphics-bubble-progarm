@@ -64,6 +64,7 @@ public final class Model
     private Point2D.Double origin; 									// Current origin coords
     private Point2D.Double cursor; 									// Current cursor coords
     private int popCount;											// Number of bubbles poppped
+    private boolean colorful;											// Boolean for colorful bubbles
 
     private ArrayList<Bubble> bubbles = new ArrayList<Bubble>();	// List of bubbles generated
     private ArrayList<Pop> popped = new ArrayList<Pop>();			// List of animations
@@ -118,18 +119,34 @@ public final class Model
     {
     	return popCount;
     }
+    
+    // Return the colorful boolean
+    public boolean getColorful()
+    {
+    	return colorful;
+    }
 
     // **********************************************************************
     // Public Methods (Modify Variables)
     // **********************************************************************
     
-    // Method for creating a bubble and storing in the list
-    public void createBubble(int x, int y, int r, int dx, int dy)
+    // Toggle whether bubbles are different colors or not
+    public void toggleColorful()
     {
     	view.getCanvas().invoke(false, new BasicUpdater() {
     		public void update(GL2 gl)
     		{
-    			 bubbles.add(new Bubble(x, y, r, dx, dy));
+    			colorful = !colorful;
+    		}
+    	});;
+    }
+    // Method for creating a bubble and storing in the list
+    public void createBubble(int x, int y, int r, int dx, int dy, float[] c)
+    {
+    	view.getCanvas().invoke(false, new BasicUpdater() {
+    		public void update(GL2 gl)
+    		{
+    			 bubbles.add(new Bubble(x, y, r, dx, dy, c));
     		}
     	});;
     }
@@ -176,7 +193,7 @@ public final class Model
     	                    {
     	                    	// Add a new popping animation at the bubbles location
     	                    	popped.add(new Pop(bubbles.get(i).getX(), bubbles.get(i).getY(), 
-    	                    			(double) bubbles.get(i).getRadius()));
+    	                    			(double) bubbles.get(i).getRadius(), bubbles.get(i).getColor()));
     	                    	// Increase the popcount based on the radius, larger bubbles give more
     	                    	// points
     	                    	popCount = popCount + (bubbles.get(i).getRadius() / 20);

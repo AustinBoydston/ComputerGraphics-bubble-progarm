@@ -328,11 +328,16 @@ public final class View
 		*/
 
 		// Output for the number of total bubbles popped which is stored in Model
+		String isColor = "no";
+		if (model.getColorful())
+			isColor = "yes";
 		String count = "Number of bubles popped: " + model.getCount();
+		String color = "Is colored bubbles on (press C): " + isColor;
 		
 		//renderer.draw(svc, 2, 16);
 		//renderer.draw(sso, 2, 30);
-		renderer.draw(count, 2, 700);				// Prints in the top left
+		renderer.draw(count, 2, 710);				// Prints in the top left
+		renderer.draw(color, 2, 696);
 
 		renderer.endRendering();
 	}
@@ -446,6 +451,26 @@ public final class View
         {
         	for (int l = 0; l < randomCascade(0.8) + 1; l++)
         	{
+        		//setColor(gl, 0, 255, 255);            // Cyan, unused
+			    // Setup for material properties, bubbles colored with cyan
+			    // or different colors based on user input
+			    float red = 0.5f;
+			    float green = 0.5f;
+			    float blue = 0.5f;
+			    if (model.getColorful())
+			    {
+				    red = RANDOM.nextFloat();
+				    green = RANDOM.nextFloat();
+				    blue = RANDOM.nextFloat();
+			    }
+			    else
+			    {
+			    	red = 0.0f;
+			    	green = 1.0f;
+			    	blue = 1.0f;
+			    }
+			    float[] emit = new float[] {red, green, blue, 1.0f};
+        		
 	        	// Boolean for determining x direction
 	        	if (RANDOM.nextBoolean() == true)
 	            	dirx = 1;
@@ -463,7 +488,7 @@ public final class View
 	        	// determining rate of change of each coordinate with dirx and diry being the decider
 	        	// for inversing the value
 	            model.createBubble(RANDOM.nextInt(200) + xSpawn , RANDOM.nextInt(200) + ySpawn, 
-	            		r, dirx*(RANDOM.nextInt(2)+1), diry*(RANDOM.nextInt(2)+1));
+	            		r, dirx*(RANDOM.nextInt(2)+1), diry*(RANDOM.nextInt(2)+1), emit);
         	}
         }
         
@@ -478,14 +503,8 @@ public final class View
 	            cy = model.getBubbleList().get(j).getY();
 	            r = model.getBubbleList().get(j).getRadius();
 	            
-	            // Begin drawing
-			    gl.glBegin(GL2.GL_POLYGON);
-			
-			    //setColor(gl, 0, 255, 255);            // Cyan, unused
-			    
-			    // Setup for material properties, bubbles colored with cyan
-			    float[] emit = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
-			    float[] shine = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
+	            float[] emit = model.getBubbleList().get(j).getColor();
+	            float[] shine = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
 			    float[] amb = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
 			    float[] spec = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
 			    float[] dif = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
@@ -494,6 +513,9 @@ public final class View
 			    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, amb, 0);
 			    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, dif, 0);
 			    //gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, spec, 0);
+	            
+	            // Begin drawing
+			    gl.glBegin(GL2.GL_POLYGON);
 			    
 			    // Locate the appropriate texture and prepare for binding
 			    Texture tex = textures[0];
@@ -604,7 +626,7 @@ public final class View
 				double r = model.getPoppedList().get(i).getRadius();
 				
 				// Setup for the material of the animation
-				float[] emit = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
+				float[] emit = model.getPoppedList().get(i).getColor();
 			    float[] shine = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
 			    float[] amb = new float[] {0.0f, 1.0f, 1.0f, 1.0f};
 			    float[] spec = new float[] {0.0f, 1.0f, 1.0f, 0.5f};
